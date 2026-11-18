@@ -9,137 +9,58 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23090B0E'/%3E%3Crect x='12' y='12' width='156' height='156' rx='32' fill='none' stroke='%23F5B82E' stroke-width='4'/%3E%3Ctext x='90' y='105' font-family='Arial, sans-serif' font-size='44' font-weight='900' fill='%23F5B82E' text-anchor='middle' letter-spacing='2'%3EAPMU%3C/text%3E%3C/svg%3E">
     <title>APMU — Global Broker & Trading Ecosystem</title>
     <style>
-        :root {
-            --bg-main: #090B0E;
-            --bg-card: #12161F;
-            --bg-input: #0D1017;
-            --gold: #F5B82E;
-            --gold-dim: rgba(245, 184, 46, 0.14);
-            --text-primary: #FFFFFF;
-            --text-secondary: #8A94A6;
-            --green: #00C853;
-            --red: #FF3D57;
-            --blue: #2979FF;
-            --border: #1F2633;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Roboto, sans-serif; }
-        body { background: var(--bg-main); color: var(--text-primary); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
-
-        header {
-            background: rgba(9, 11, 14, 0.94); backdrop-filter: blur(14px);
-            padding: 48px 16px 14px; border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 200;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .brand { display: flex; align-items: center; gap: 8px; }
-        .logo { font-size: 22px; font-weight: 900; letter-spacing: 2px; color: var(--gold); }
-        .broker-tag { font-size: 10px; background: var(--gold-dim); color: var(--gold); padding: 3px 8px; border-radius: 6px; font-weight: 700; }
-        .lang-select {
-            background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border);
-            padding: 6px 10px; border-radius: 10px; font-size: 12px; font-weight: 600; outline: none;
-        }
-
-        .screen { display: none; padding: 16px; animation: fade 0.2s ease; }
-        .screen.active { display: block; }
-        @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
-        h2 { font-size: 18px; font-weight: 800; margin-bottom: 12px; color: var(--text-primary); }
-        h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
-        .muted { font-size: 12px; color: var(--text-secondary); line-height: 1.45; }
-
-        input, select {
-            width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-            color: var(--text-primary); padding: 12px 14px; border-radius: 12px;
-            margin-bottom: 10px; font-size: 14px; outline: none;
-        }
-        input:focus, select:focus { border-color: var(--gold); }
-        .btn {
-            width: 100%; background: var(--gold); color: #000; font-weight: 800;
-            border: none; padding: 14px; border-radius: 12px; font-size: 14px; cursor: pointer;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn-outline {
-            width: 100%; background: transparent; color: var(--gold); font-weight: 700;
-            border: 1px solid var(--gold); padding: 12px; border-radius: 12px; font-size: 13px; cursor: pointer; margin-top: 6px;
-        }
-        .btn-social {
-            width: 100%; background: #1A202C; color: #FFF; border: 1px solid var(--border);
-            padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-admin-entry {
-            width: 100%; background: rgba(245, 184, 46, 0.08); color: var(--gold);
-            border: 1px dashed var(--gold); padding: 12px; border-radius: 12px;
-            font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 10px;
-        }
-
-        .sub-tabs { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; }
-        .sub-tab {
-            background: var(--bg-input); border: 1px solid var(--border); color: var(--text-secondary);
-            padding: 9px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; flex: 1; text-align: center;
-        }
-        .sub-tab.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
-
-        /* Broker Card */
-        .b-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-        .b-name { font-size: 16px; font-weight: 800; color: #FFF; }
-        .b-tier { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 700; }
-        .tier-1 { background: rgba(0, 200, 83, 0.15); color: var(--green); }
-        .tier-off { background: rgba(255, 61, 87, 0.15); color: var(--red); }
-        .b-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--bg-input); padding: 10px; border-radius: 10px; margin: 10px 0; text-align: center; }
-        .b-lbl { font-size: 10px; color: var(--text-secondary); }
-        .b-val { font-size: 12px; font-weight: 700; margin-top: 2px; }
-
-        /* 2FA Box */
-        .secret-box {
-            background: #07090C; border: 1px dashed var(--gold); padding: 10px; border-radius: 10px;
-            font-family: monospace; font-size: 13px; color: var(--gold); text-align: center; margin: 10px 0;
-            user-select: all;
-        }
-        .live-totp { font-size: 12px; color: var(--green); text-align: center; margin-bottom: 10px; font-weight: 700; }
-
-        /* Bottom Nav (Only visible inside app) */
-        nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(18, 22, 31, 0.96); backdrop-filter: blur(14px);
-            border-top: 1px solid var(--border); display: none;
-            justify-content: space-around; padding: 10px 0 26px; z-index: 200;
-        }
-        nav.visible { display: flex; }
-        .nav-btn { background: none; border: none; color: var(--text-secondary); font-size: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
-        .nav-btn.active { color: var(--gold); font-weight: 700; }
-        .nav-ico { font-size: 19px; }
-
-        /* Modal */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 300; align-items: center; justify-content: center; padding: 16px; }
-        .modal.open { display: flex; }
-        .modal-box { background: var(--bg-card); border: 1px solid var(--gold); border-radius: 18px; padding: 20px; width: 100%; max-width: 400px; max-height: 85vh; overflow-y: auto; }
-        .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+        :root { --bg-main:#090B0E; --bg-card:#12161F; --bg-input:#0D1017; --gold:#F5B82E; --gold-dim:rgba(245,184,46,0.14); --text-primary:#FFF; --text-secondary:#8A94A6; --green:#00C853; --red:#FF3D57; --border:#1F2633; }
+        * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; }
+        body { background:var(--bg-main); color:var(--text-primary); padding-bottom:90px; }
+        header { background:rgba(9,11,14,0.94); backdrop-filter:blur(14px); padding:48px 16px 14px; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:200; display:flex; justify-content:space-between; align-items:center; }
+        .brand { display:flex; align-items:center; gap:8px; }
+        .logo { font-size:22px; font-weight:900; letter-spacing:2px; color:var(--gold); }
+        .broker-tag { font-size:10px; background:var(--gold-dim); color:var(--gold); padding:3px 8px; border-radius:6px; font-weight:700; }
+        .lang-select { background:var(--bg-card); color:#FFF; border:1px solid var(--border); padding:6px 10px; border-radius:10px; font-size:12px; font-weight:600; outline:none; }
+        .screen { display:none; padding:16px; }
+        .screen.active { display:block; }
+        h2 { font-size:18px; font-weight:800; margin-bottom:12px; }
+        h3 { font-size:15px; font-weight:700; margin-bottom:8px; }
+        .card { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:14px; }
+        .muted { font-size:12px; color:var(--text-secondary); line-height:1.45; }
+        input, select { width:100%; background:var(--bg-input); border:1px solid var(--border); color:#FFF; padding:12px 14px; border-radius:12px; margin-bottom:10px; font-size:14px; outline:none; }
+        .btn { width:100%; background:var(--gold); color:#000; font-weight:800; border:none; padding:14px; border-radius:12px; font-size:14px; cursor:pointer; }
+        .btn-outline { width:100%; background:transparent; color:var(--gold); font-weight:700; border:1px solid var(--gold); padding:12px; border-radius:12px; font-size:13px; cursor:pointer; margin-top:6px; }
+        .btn-social { width:100%; background:#1A202C; color:#FFF; border:1px solid var(--border); padding:12px; border-radius:12px; font-size:13px; font-weight:600; margin-bottom:8px; cursor:pointer; }
+        .btn-admin-entry { width:100%; background:rgba(245,184,46,0.08); color:var(--gold); border:1px dashed var(--gold); padding:12px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; margin-top:10px; }
+        .sub-tabs { display:flex; gap:6px; margin-bottom:14px; overflow-x:auto; }
+        .sub-tab { background:var(--bg-input); border:1px solid var(--border); color:var(--text-secondary); padding:9px 12px; border-radius:10px; font-size:12px; font-weight:600; white-space:nowrap; cursor:pointer; flex:1; text-align:center; }
+        .sub-tab.active { background:var(--gold); color:#000; border-color:var(--gold); font-weight:700; }
+        .b-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+        .b-name { font-size:16px; font-weight:800; }
+        .b-tier { font-size:10px; padding:3px 8px; border-radius:6px; font-weight:700; }
+        .tier-1 { background:rgba(0,200,83,0.15); color:var(--green); }
+        .tier-off { background:rgba(255,61,87,0.15); color:var(--red); }
+        .b-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; background:var(--bg-input); padding:10px; border-radius:10px; margin:10px 0; text-align:center; }
+        .b-lbl { font-size:10px; color:var(--text-secondary); }
+        .b-val { font-size:12px; font-weight:700; margin-top:2px; }
+        .secret-box { background:#07090C; border:1px dashed var(--gold); padding:10px; border-radius:10px; font-family:monospace; font-size:13px; color:var(--gold); text-align:center; margin:10px 0; user-select:all; }
+        .live-totp { font-size:12px; color:var(--green); text-align:center; margin-bottom:10px; font-weight:700; }
+        nav { position:fixed; bottom:0; left:0; right:0; background:rgba(18,22,31,0.96); border-top:1px solid var(--border); display:none; justify-content:space-around; padding:10px 0 26px; z-index:200; }
+        nav.visible { display:flex; }
+        .nav-btn { background:none; border:none; color:var(--text-secondary); font-size:10px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; }
+        .nav-btn.active { color:var(--gold); font-weight:700; }
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:300; align-items:center; justify-content:center; padding:16px; }
+        .modal.open { display:flex; }
+        .modal-box { background:var(--bg-card); border:1px solid var(--gold); border-radius:18px; padding:20px; width:100%; max-width:400px; max-height:85vh; overflow-y:auto; }
+        .row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
     </style>
 </head>
 <body>
-
 <header>
-    <div class="brand">
-        <span class="logo">APMU</span>
-        <span class="broker-tag" id="headerBadge">SWISSQUOTE INFRA</span>
-    </div>
+    <div class="brand"><span class="logo">APMU</span><span class="broker-tag">SWISSQUOTE INFRA</span></div>
     <select class="lang-select" id="langSelect" onchange="changeLang(this.value)">
-        <option value="uz">🇺🇿 Oʻzbek</option>
-        <option value="ru">🇷🇺 Русский</option>
-        <option value="en">🇬🇧 English</option>
-        <option value="kk">🇰🇿 Қазақ</option>
-        <option value="tg">🇹🇯 Тоҷикӣ</option>
-        <option value="ky">🇰🇬 Кыргыз</option>
-        <option value="ar">🇸🇦 العربية</option>
-        <option value="zh">🇨🇳 中文</option>
-        <option value="ms">🇲🇾 Melayu</option>
-        <option value="ja">🇯🇵 日本語</option>
+        <option value="uz">🇺🇿 Oʻzbek</option><option value="ru">🇷🇺 Русский</option><option value="en">🇬🇧 English</option>
+        <option value="kk">🇰🇿 Қазақ</option><option value="tg">🇹🇯 Тоҷикӣ</option><option value="ky">🇰🇬 Кыргыз</option>
+        <option value="ar">🇸🇦 العربية</option><option value="zh">🇨🇳 中文</option><option value="ms">🇲🇾 Melayu</option><option value="ja">🇯🇵 日本語</option>
     </select>
 </header>
 
-<!-- 1-EKRAN: KIRISH (AUTH) -->
 <div id="scr-login" class="screen active">
     <h2 data-t="auth_title">APMU Tizimiga Kirish</h2>
     <div class="card">
@@ -148,12 +69,9 @@
             <button class="sub-tab" onclick="switchAuthTab('gmail', this)">Gmail</button>
             <button class="sub-tab" onclick="switchAuthTab('sms', this)" data-t="tab_phone">Telefon SMS</button>
         </div>
-
         <div id="auth-fields">
-            <input type="text" id="inpUser" data-p="ph_user" placeholder="Username kiriting">
-            <input type="password" id="inpPass" data-p="ph_pass" placeholder="Parolingiz">
+            <input type="text" placeholder="Username kiriting"><input type="password" placeholder="Parolingiz">
         </div>
-
         <label class="muted" style="display:block; margin-bottom:6px;" data-t="role_lbl">Rolni tanlang (4 yoʻnalish):</label>
         <select id="roleSelect">
             <option value="trader" data-t="r1">1. Treyder (Chempionat va Boshqaruv)</option>
@@ -161,8 +79,30 @@
             <option value="partner" data-t="r3">3. Hamkor (IB) va Broker</option>
             <option value="retail" data-t="r4">4. Mahalliy Kichik Investor ($100 – $10,000)</option>
         </select>
-
         <button class="btn" onclick="open2FAModal()" data-t="btn_2fa">Davom etish (2FA Authenticator)</button>
-
-        <div style="text-align:center; margin: 12px 0; font-size:12px; color:var(--text-secondary);" data-t="or_fast">yoki tezkor kirish</div>
+        <div style="text-align:center; margin:12px 0; font-size:12px; color:var(--text-secondary);" data-t="or_fast">yoki tezkor kirish</div>
         <button class="btn-social" onclick="openOAuthModal('Google ID')">G &nbsp;<span data-t="btn_google">Google ID orqali kirish</span></button>
+        <button class="btn-social" onclick="openOAuthModal('Apple ID')"> &nbsp;<span data-t="btn_apple">Apple ID orqali kirish</span></button>
+        <button class="btn-admin-entry" onclick="openBossLogin()" data-t="btn_boss">👑 Rahbar kabinetiga kirish (Super-Admin)</button>
+    </div>
+</div>
+
+<div id="scr-kyc" class="screen">
+    <h2 data-t="kyc_title">KYC Shaxsni Tasdiqlash</h2>
+    <div class="card" style="border-color:var(--gold);">
+        <div class="broker-tag" id="kycRoleBadge" style="margin-bottom:10px; display:inline-block;">1. TREYDER</div>
+        <p class="muted" style="margin-bottom:12px;" data-t="kyc_desc">Pasport/ID va doimiy yashash manzilingizni tasdiqlang.</p>
+        <input type="text" id="kycName" placeholder="Toʻliq F.I.Sh (Pasport boʻyicha)">
+        <input type="text" id="kycPass" placeholder="Pasport seriyasi va raqami / ID">
+        <input type="text" id="kycAddr" placeholder="Doimiy yashash manzilingiz">
+        <input type="text" id="kycInfo" placeholder="Mijoz haqida qoʻshimcha maʼlumot">
+        <button class="btn" onclick="completeKYC()" data-t="btn_kyc">Tasdiqlash va Ilovaga kirish</button>
+    </div>
+</div>
+
+<div id="scr-brokers" class="screen">
+    <h2 data-t="br_title">Jahon Brokerlari Katalogi</h2>
+    <input type="text" id="brokerSearch" onkeyup="renderBrokers()" placeholder="Broker nomini qidiring...">
+    <div class="sub-tabs">
+        <button class="sub-tab active" onclick="setBrokerCat('all', this)" data-t="cat_all">Barchasi</button>
+        <button class="sub-tab" onclick="setBrokerCat('tier1', this)" data-t="cat_t1">Eng Nufuzli (Tier-1)</button>
