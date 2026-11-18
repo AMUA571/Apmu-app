@@ -1,110 +1,142 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="APMU">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23090B0E'/%3E%3Crect x='12' y='12' width='156' height='156' rx='32' fill='none' stroke='%23F5B82E' stroke-width='4'/%3E%3Ctext x='90' y='105' font-family='Arial, sans-serif' font-size='44' font-weight='900' fill='%23F5B82E' text-anchor='middle' letter-spacing='2'%3EAPMU%3C/text%3E%3C/svg%3E">
-    <title>APMU — Global Broker & Trading Ecosystem</title>
-    <style>
-        :root { --bg-main:#090B0E; --bg-card:#12161F; --bg-input:#0D1017; --gold:#F5B82E; --gold-dim:rgba(245,184,46,0.14); --text-primary:#FFF; --text-secondary:#8A94A6; --green:#00C853; --red:#FF3D57; --border:#1F2633; }
-        * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; }
-        body { background:var(--bg-main); color:var(--text-primary); padding-bottom:90px; }
-        header { background:rgba(9,11,14,0.94); backdrop-filter:blur(14px); padding:48px 16px 14px; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:200; display:flex; justify-content:space-between; align-items:center; }
-        .brand { display:flex; align-items:center; gap:8px; }
-        .logo { font-size:22px; font-weight:900; letter-spacing:2px; color:var(--gold); }
-        .broker-tag { font-size:10px; background:var(--gold-dim); color:var(--gold); padding:3px 8px; border-radius:6px; font-weight:700; }
-        .lang-select { background:var(--bg-card); color:#FFF; border:1px solid var(--border); padding:6px 10px; border-radius:10px; font-size:12px; font-weight:600; outline:none; }
-        .screen { display:none; padding:16px; }
-        .screen.active { display:block; }
-        h2 { font-size:18px; font-weight:800; margin-bottom:12px; }
-        h3 { font-size:15px; font-weight:700; margin-bottom:8px; }
-        .card { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:14px; }
-        .muted { font-size:12px; color:var(--text-secondary); line-height:1.45; }
-        input, select { width:100%; background:var(--bg-input); border:1px solid var(--border); color:#FFF; padding:12px 14px; border-radius:12px; margin-bottom:10px; font-size:14px; outline:none; }
-        .btn { width:100%; background:var(--gold); color:#000; font-weight:800; border:none; padding:14px; border-radius:12px; font-size:14px; cursor:pointer; }
-        .btn-outline { width:100%; background:transparent; color:var(--gold); font-weight:700; border:1px solid var(--gold); padding:12px; border-radius:12px; font-size:13px; cursor:pointer; margin-top:6px; }
-        .btn-social { width:100%; background:#1A202C; color:#FFF; border:1px solid var(--border); padding:12px; border-radius:12px; font-size:13px; font-weight:600; margin-bottom:8px; cursor:pointer; }
-        .btn-admin-entry { width:100%; background:rgba(245,184,46,0.08); color:var(--gold); border:1px dashed var(--gold); padding:12px; border-radius:12px; font-size:13px; font-weight:700; cursor:pointer; margin-top:10px; }
-        .sub-tabs { display:flex; gap:6px; margin-bottom:14px; overflow-x:auto; }
-        .sub-tab { background:var(--bg-input); border:1px solid var(--border); color:var(--text-secondary); padding:9px 12px; border-radius:10px; font-size:12px; font-weight:600; white-space:nowrap; cursor:pointer; flex:1; text-align:center; }
-        .sub-tab.active { background:var(--gold); color:#000; border-color:var(--gold); font-weight:700; }
-        .b-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
-        .b-name { font-size:16px; font-weight:800; }
-        .b-tier { font-size:10px; padding:3px 8px; border-radius:6px; font-weight:700; }
-        .tier-1 { background:rgba(0,200,83,0.15); color:var(--green); }
-        .tier-off { background:rgba(255,61,87,0.15); color:var(--red); }
-        .b-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; background:var(--bg-input); padding:10px; border-radius:10px; margin:10px 0; text-align:center; }
-        .b-lbl { font-size:10px; color:var(--text-secondary); }
-        .b-val { font-size:12px; font-weight:700; margin-top:2px; }
-        .secret-box { background:#07090C; border:1px dashed var(--gold); padding:10px; border-radius:10px; font-family:monospace; font-size:13px; color:var(--gold); text-align:center; margin:10px 0; user-select:all; }
-        .live-totp { font-size:12px; color:var(--green); text-align:center; margin-bottom:10px; font-weight:700; }
-        nav { position:fixed; bottom:0; left:0; right:0; background:rgba(18,22,31,0.96); border-top:1px solid var(--border); display:none; justify-content:space-around; padding:10px 0 26px; z-index:200; }
-        nav.visible { display:flex; }
-        .nav-btn { background:none; border:none; color:var(--text-secondary); font-size:10px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; }
-        .nav-btn.active { color:var(--gold); font-weight:700; }
-        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:300; align-items:center; justify-content:center; padding:16px; }
-        .modal.open { display:flex; }
-        .modal-box { background:var(--bg-card); border:1px solid var(--gold); border-radius:18px; padding:20px; width:100%; max-width:400px; max-height:85vh; overflow-y:auto; }
-        .row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>APMU</title>
+<style>
+:root{--bg:#090B0E;--card:#12161F;--inp:#0D1017;--gold:#F5B82E;--txt:#FFF;--mut:#8A94A6;--grn:#00C853;--red:#FF3D57;--brd:#1F2633}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,Roboto,sans-serif}
+body{background:var(--bg);color:var(--txt);padding-bottom:85px}
+header{background:rgba(9,11,14,.95);padding:46px 16px 12px;border-bottom:1px solid var(--brd);position:sticky;top:0;z-index:99;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:22px;font-weight:900;letter-spacing:2px;color:var(--gold)}
+.tag{font-size:10px;background:rgba(245,184,46,.15);color:var(--gold);padding:3px 7px;border-radius:6px;font-weight:700}
+select,input{width:100%;background:var(--inp);border:1px solid var(--brd);color:#FFF;padding:11px;border-radius:11px;margin-bottom:10px;font-size:14px;outline:none}
+.lang{width:auto;padding:6px 10px;margin:0;font-size:12px}
+.scr{display:none;padding:16px}.scr.act{display:block}
+.card{background:var(--card);border:1px solid var(--brd);border-radius:15px;padding:15px;margin-bottom:12px}
+h2{font-size:17px;margin-bottom:12px}h3{font-size:15px;margin-bottom:8px}
+.mut{font-size:12px;color:var(--mut);line-height:1.4}
+.btn{width:100%;background:var(--gold);color:#000;font-weight:800;border:none;padding:13px;border-radius:11px;font-size:14px;cursor:pointer}
+.btn-o{width:100%;background:transparent;color:var(--gold);font-weight:700;border:1px solid var(--gold);padding:11px;border-radius:11px;font-size:13px;margin-top:6px;cursor:pointer}
+.btn-s{width:100%;background:#1A202C;color:#FFF;border:1px solid var(--brd);padding:11px;border-radius:11px;font-size:13px;font-weight:600;margin-bottom:8px;cursor:pointer}
+.btn-b{width:100%;background:rgba(245,184,46,.08);color:var(--gold);border:1px dashed var(--gold);padding:11px;border-radius:11px;font-size:13px;font-weight:700;margin-top:6px;cursor:pointer}
+.tabs{display:flex;gap:6px;margin-bottom:12px}.tab{flex:1;background:var(--inp);border:1px solid var(--brd);color:var(--mut);padding:8px;border-radius:9px;font-size:12px;text-align:center;cursor:pointer}
+.tab.act{background:var(--gold);color:#000;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--inp);padding:9px;border-radius:9px;margin:9px 0;text-align:center}
+.row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--brd);font-size:13px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:center;justify-content:center;padding:16px}.modal.open{display:flex}
+.mbox{background:var(--card);border:1px solid var(--gold);border-radius:16px;padding:18px;width:100%;max-width:380px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#12161F;border-top:1px solid var(--brd);display:none;justify-content:space-around;padding:9px 0 24px;z-index:99}
+nav.vis{display:flex}.nbtn{background:none;border:none;color:var(--mut);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px}.nbtn.act{color:var(--gold);font-weight:700}
+</style>
 </head>
 <body>
 <header>
-    <div class="brand"><span class="logo">APMU</span><span class="broker-tag">SWISSQUOTE INFRA</span></div>
-    <select class="lang-select" id="langSelect" onchange="changeLang(this.value)">
-        <option value="uz">🇺🇿 Oʻzbek</option><option value="ru">🇷🇺 Русский</option><option value="en">🇬🇧 English</option>
-        <option value="kk">🇰🇿 Қазақ</option><option value="tg">🇹🇯 Тоҷикӣ</option><option value="ky">🇰🇬 Кыргыз</option>
-        <option value="ar">🇸🇦 العربية</option><option value="zh">🇨🇳 中文</option><option value="ms">🇲🇾 Melayu</option><option value="ja">🇯🇵 日本語</option>
-    </select>
+<div><span class="logo">APMU</span> <span class="tag">SWISSQUOTE</span></div>
+<select class="lang" onchange="setL(this.value)">
+<option value="uz">🇺🇿 Oʻzbek</option><option value="ru">🇷🇺 Русский</option><option value="en">🇬🇧 English</option>
+<option value="kk">🇰🇿 Қазақ</option><option value="tg">🇹🇯 Тоҷикӣ</option><option value="ky">🇰🇬 Кыргыз</option>
+<option value="ar">🇸🇦 العربية</option><option value="zh">🇨🇳 中文</option><option value="ms">🇲🇾 Melayu</option><option value="ja">🇯🇵 日本語</option>
+</select>
 </header>
 
-<div id="scr-login" class="screen active">
-    <h2 data-t="auth_title">APMU Tizimiga Kirish</h2>
-    <div class="card">
-        <div class="sub-tabs">
-            <button class="sub-tab active" onclick="switchAuthTab('user', this)" data-t="tab_user">Username / Parol</button>
-            <button class="sub-tab" onclick="switchAuthTab('gmail', this)">Gmail</button>
-            <button class="sub-tab" onclick="switchAuthTab('sms', this)" data-t="tab_phone">Telefon SMS</button>
-        </div>
-        <div id="auth-fields">
-            <input type="text" placeholder="Username kiriting"><input type="password" placeholder="Parolingiz">
-        </div>
-        <label class="muted" style="display:block; margin-bottom:6px;" data-t="role_lbl">Rolni tanlang (4 yoʻnalish):</label>
-        <select id="roleSelect">
-            <option value="trader" data-t="r1">1. Treyder (Chempionat va Boshqaruv)</option>
-            <option value="corp" data-t="r2">2. Yirik Investor (Yuridik shaxs / Kompaniya)</option>
-            <option value="partner" data-t="r3">3. Hamkor (IB) va Broker</option>
-            <option value="retail" data-t="r4">4. Mahalliy Kichik Investor ($100 – $10,000)</option>
-        </select>
-        <button class="btn" onclick="open2FAModal()" data-t="btn_2fa">Davom etish (2FA Authenticator)</button>
-        <div style="text-align:center; margin:12px 0; font-size:12px; color:var(--text-secondary);" data-t="or_fast">yoki tezkor kirish</div>
-        <button class="btn-social" onclick="openOAuthModal('Google ID')">G &nbsp;<span data-t="btn_google">Google ID orqali kirish</span></button>
-        <button class="btn-social" onclick="openOAuthModal('Apple ID')"> &nbsp;<span data-t="btn_apple">Apple ID orqali kirish</span></button>
-        <button class="btn-admin-entry" onclick="openBossLogin()" data-t="btn_boss">👑 Rahbar kabinetiga kirish (Super-Admin)</button>
-    </div>
+<div id="s-login" class="scr act">
+<h2 data-t="t1">APMU Tizimiga Kirish</h2>
+<div class="card">
+<div class="tabs">
+<div class="tab act" onclick="authT('u',this)" data-t="t2">Username / Parol</div>
+<div class="tab" onclick="authT('g',this)">Gmail</div>
+<div class="tab" onclick="authT('s',this)" data-t="t3">Telefon SMS</div>
+</div>
+<div id="afields"><input placeholder="Username"><input type="password" placeholder="Parol"></div>
+<select id="role">
+<option value="trader" data-t="r1">1. Treyder (Chempionat)</option>
+<option value="corp" data-t="r2">2. Yirik Investor (Kompaniya)</option>
+<option value="part" data-t="r3">3. Hamkor (IB) va Broker</option>
+<option value="ret" data-t="r4">4. Mahalliy Investor ($100-$10,000)</option>
+</select>
+<button class="btn" onclick="openM('m-2fa')" data-t="b1">Davom etish (2FA Authenticator)</button>
+<div style="text-align:center;margin:10px 0;font-size:12px;color:var(--mut)" data-t="or">yoki tezkor kirish</div>
+<button class="btn-s" onclick="openOAuth('Google ID')">G &nbsp;<span data-t="bg">Google ID orqali kirish</span></button>
+<button class="btn-s" onclick="openOAuth('Apple ID')"> &nbsp;<span data-t="ba">Apple ID orqali kirish</span></button>
+<button class="btn-b" onclick="bossIn()" data-t="bb">👑 Rahbar kabinetiga kirish (Super-Admin)</button>
+</div>
 </div>
 
-<div id="scr-kyc" class="screen">
-    <h2 data-t="kyc_title">KYC Shaxsni Tasdiqlash</h2>
-    <div class="card" style="border-color:var(--gold);">
-        <div class="broker-tag" id="kycRoleBadge" style="margin-bottom:10px; display:inline-block;">1. TREYDER</div>
-        <p class="muted" style="margin-bottom:12px;">Pasport/ID va doimiy yashash manzilingizni tasdiqlang.</p>
-        <input type="text" id="kycName" placeholder="Toʻliq F.I.Sh (Pasport boʻyicha)">
-        <input type="text" id="kycPass" placeholder="Pasport seriyasi va raqami / ID">
-        <input type="text" id="kycAddr" placeholder="Doimiy yashash manzilingiz">
-        <input type="text" id="kycInfo" placeholder="Mijoz haqida qoʻshimcha maʼlumot">
-        <button class="btn" onclick="completeKYC()" data-t="btn_kyc">Tasdiqlash va Ilovaga kirish</button>
-    </div>
+<div id="s-kyc" class="scr">
+<h2 data-t="kyc">KYC Shaxsni Tasdiqlash</h2>
+<div class="card" style="border-color:var(--gold)">
+<p class="mut" style="margin-bottom:10px" data-t="kycd">Treyder va kichik investorlar uchun pasport/ID va manzil majburiy:</p>
+<input id="k1" placeholder="F.I.Sh (Pasport boʻyicha)"><input id="k2" placeholder="Pasport seriya / ID">
+<input id="k3" placeholder="Yashash manzili"><input id="k4" placeholder="Qoʻshimcha maʼlumot">
+<button class="btn" onclick="doneKYC()" data-t="bkyc">Tasdiqlash va Kirish</button>
+</div>
 </div>
 
-<div id="scr-brokers" class="screen">
-    <h2 data-t="br_title">Jahon Brokerlari Katalogi</h2>
-    <input type="text" id="brokerSearch" onkeyup="renderBrokers()" placeholder="Broker nomini qidiring...">
-    <div class="sub-tabs">
-        <button class="sub-tab active" onclick="setBrokerCat('all', this)" data-t="cat_all">Barchasi</button>
-        <button class="sub-tab" onclick="setBrokerCat('tier1', this)" data-t="cat_t1">Eng Nufuzli (Tier-1)</button>
-        <button class="sub-tab" onclick="setBrokerCat('offshore', this)" data-t="cat_off">Xalqaro / Ofshor</button>
-    </div>
+<div id="s-brok" class="scr">
+<h2 data-t="brt">Jahon Brokerlari Katalogi</h2>
+<input id="bq" onkeyup="drawB()" placeholder="Broker qidirish...">
+<div class="tabs">
+<div class="tab act" onclick="catB('all',this)" data-t="c1">Barchasi</div>
+<div class="tab" onclick="catB('t1',this)" data-t="c2">Nufuzli (Tier-1)</div>
+<div class="tab" onclick="catB('off',this)" data-t="c3">Ofshor</div>
+</div>
+<div id="blist"></div>
+</div>
+
+<div id="s-champ" class="scr">
+<h2>Swissquote MT5 Chempionat</h2>
+<div class="card" style="border-color:var(--gold)">
+<p class="mut" style="margin-bottom:10px">Badal 100% qaytadi + 60% foyda. Max zarar: -7%.</p>
+<select><option>1-Liga: $500 – $999</option><option>2-Liga: $1,000 – $10,000</option></select>
+<button class="btn" onclick="alert('MT5 Login yuborildi!')">Ishtirok etish</button>
+</div>
+</div>
+
+<div id="s-boss" class="scr">
+<div style="display:flex;justify-content:space-between;margin-bottom:12px"><h2 style="color:var(--gold);margin:0">👑 Rahbar Kabineti</h2><button onclick="exitApp()" style="background:var(--red);color:#fff;border:none;padding:6px 12px;border-radius:8px">Chiqish</button></div>
+<div class="card">
+<h3>Ishchilarga Vazifa Berish</h3>
+<input id="wn" placeholder="Ishchi ismi"><input id="wl" placeholder="Login"><input id="wp" placeholder="Parol">
+<select id="wt"><option>Chempionat tashkilotchisi</option><option>KYC tekshiruvchi</option><option>Visa / SWIFT moliya</option></select>
+<button class="btn" onclick="addW()">Ishchini qoʻshish</button>
+</div>
+<div id="wlist"></div>
+</div>
+
+<div id="m-oa" class="modal"><div class="mbox">
+<h3 id="oat" style="color:var(--gold)">Google ID</h3>
+<input value="amua571@gmail.com"><input value="AMUA571">
+<button class="btn" onclick="closeM();openM('m-2fa')">Tasdiqlash</button>
+<button class="btn-o" onclick="closeM()">Yopish</button>
+</div></div>
+
+<div id="m-2fa" class="modal"><div class="mbox">
+<h3 style="color:var(--gold)">🔐 2FA Authenticator</h3>
+<div style="background:#07090C;border:1px dashed var(--gold);padding:8px;text-align:center;color:var(--gold);margin:8px 0;font-family:monospace">JBSWY3DPEHPK3PXP</div>
+<div style="text-align:center;color:var(--grn);font-size:12px;margin-bottom:8px">Server kodi: <b id="tcode">482910</b> (<span id="tsec">30</span>s)</div>
+<input type="number" id="tinp" placeholder="6 xonali kod" style="text-align:center;font-size:18px;letter-spacing:4px">
+<button class="btn" onclick="check2FA()">Kirish</button>
+<button class="btn-o" onclick="closeM()">Orqaga</button>
+</div></div>
+
+<div id="m-binfo" class="modal"><div class="mbox" id="bdet"></div></div>
+
+<nav id="nav">
+<button class="nbtn act" onclick="go('s-brok',this)"><span>🌐</span><span data-t="nb">Brokerlar</span></button>
+<button class="nbtn" onclick="go('s-champ',this)"><span>🏆</span><span data-t="nc">Chempionat</span></button>
+<button class="nbtn" onclick="bossIn()"><span>👑</span><span data-t="nr">Rahbar</span></button>
+<button class="nbtn" onclick="exitApp()"><span>🚪</span><span data-t="ne">Chiqish</span></button>
+</nav>
+
+<script>
+const B=[
+{n:"Swissquote Bank",c:"t1",b:"Tier-1 Shveytsariya",r:"FINMA, FCA, DFSA",l:"1:100",s:"0.0 pips",d:"$1,000",i:"Shveytsariya bank-brokeri. SIX birjasida roʻyxatga olingan. APMU rasmiy bazasi."},
+{n:"Interactive Brokers",c:"t1",b:"Tier-1 AQSh",r:"SEC, FINRA, FCA",l:"1:50",s:"Birja",d:"$0",i:"150 dan ortiq jahon birjalariga toʻgʻridan-toʻgʻri ulanuvchi gigant broker."},
+{n:"Saxo Bank",c:"t1",b:"Tier-1 Yevropa",r:"FSA, FINMA",l:"1:100",s:"0.4 pips",d:"$2,000",i:"Yirik investorlar uchun Daniya investitsiya banki."},
+{n:"IG Markets",c:"t1",b:"Tier-1 FTSE 250",r:"FCA, ASIC",l:"1:200",s:"0.6 pips",d:"$250",i:"1974-yilda tashkil etilgan London birjasidagi nufuzli broker."},
+{n:"Pepperstone",c:"t1",b:"Tier-1 ECN",r:"ASIC, FCA, DFSA",l:"1:500",s:"0.0 pips",d:"$200",i:"MT5, cTrader va TradingView bilan ishlovchi tezkor ECN broker."},
+{n:"IC Markets",c:"off",b:"Ofshor / ECN",r:"ASIC, FSA Seyshel",l:"1:1000",s:"0.0 pips",d:"$200",i:"Katta savdo aylanmasiga ega True ECN broker."},
