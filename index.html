@@ -6,7 +6,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="APMU">
-    <title>APMU — Global Prop & Copy-Trading Ecosystem</title>
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23090B0E'/%3E%3Crect x='12' y='12' width='156' height='156' rx='32' fill='none' stroke='%23F5B82E' stroke-width='4'/%3E%3Ctext x='90' y='105' font-family='Arial, sans-serif' font-size='44' font-weight='900' fill='%23F5B82E' text-anchor='middle' letter-spacing='2'%3EAPMU%3C/text%3E%3C/svg%3E">
+    <title>APMU — Global Broker & Trading Ecosystem</title>
     <style>
         :root {
             --bg-main: #090B0E;
@@ -18,14 +19,14 @@
             --text-secondary: #8A94A6;
             --green: #00C853;
             --red: #FF3D57;
+            --blue: #2979FF;
             --border: #1F2633;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Roboto, sans-serif; }
         body { background: var(--bg-main); color: var(--text-primary); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
 
-        /* Header */
         header {
-            background: rgba(9, 11, 14, 0.92); backdrop-filter: blur(14px);
+            background: rgba(9, 11, 14, 0.94); backdrop-filter: blur(14px);
             padding: 48px 16px 14px; border-bottom: 1px solid var(--border);
             position: sticky; top: 0; z-index: 200;
             display: flex; justify-content: space-between; align-items: center;
@@ -38,17 +39,15 @@
             padding: 6px 10px; border-radius: 10px; font-size: 12px; font-weight: 600; outline: none;
         }
 
-        /* Views */
-        .view { display: none; padding: 16px; animation: fade 0.2s ease; }
-        .view.active { display: block; }
+        .screen { display: none; padding: 16px; animation: fade 0.2s ease; }
+        .screen.active { display: block; }
         @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        h2 { font-size: 18px; font-weight: 800; margin-bottom: 12px; color: var(--text-primary); }
         h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
         .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
         .muted { font-size: 12px; color: var(--text-secondary); line-height: 1.45; }
 
-        /* Inputs & Buttons */
         input, select {
             width: 100%; background: var(--bg-input); border: 1px solid var(--border);
             color: var(--text-primary); padding: 12px 14px; border-radius: 12px;
@@ -58,9 +57,8 @@
         .btn {
             width: 100%; background: var(--gold); color: #000; font-weight: 800;
             border: none; padding: 14px; border-radius: 12px; font-size: 14px; cursor: pointer;
-            transition: 0.15s;
         }
-        .btn:active { transform: scale(0.98); opacity: 0.9; }
+        .btn:active { transform: scale(0.98); }
         .btn-outline {
             width: 100%; background: transparent; color: var(--gold); font-weight: 700;
             border: 1px solid var(--gold); padding: 12px; border-radius: 12px; font-size: 13px; cursor: pointer; margin-top: 6px;
@@ -68,48 +66,56 @@
         .btn-social {
             width: 100%; background: #1A202C; color: #FFF; border: 1px solid var(--border);
             padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-admin-entry {
+            width: 100%; background: rgba(245, 184, 46, 0.08); color: var(--gold);
+            border: 1px dashed var(--gold); padding: 12px; border-radius: 12px;
+            font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 10px;
         }
 
-        /* Tabs inside sections */
         .sub-tabs { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; }
         .sub-tab {
-            background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary);
-            padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer;
+            background: var(--bg-input); border: 1px solid var(--border); color: var(--text-secondary);
+            padding: 9px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; flex: 1; text-align: center;
         }
-        .sub-tab.active { background: var(--gold); color: #000; border-color: var(--gold); }
+        .sub-tab.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
 
-        /* Trader Card */
-        .t-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .t-id { font-weight: 800; font-size: 15px; }
-        .t-roi { color: var(--green); font-weight: 800; font-size: 16px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: var(--bg-input); padding: 10px; border-radius: 12px; text-align: center; }
-        .g-lbl { font-size: 10px; color: var(--text-secondary); }
-        .g-val { font-size: 13px; font-weight: 700; margin-top: 3px; }
-        .privacy-badge { display: inline-block; font-size: 11px; color: var(--gold); background: var(--gold-dim); padding: 4px 8px; border-radius: 6px; margin-top: 10px; }
+        /* Broker Card */
+        .b-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .b-name { font-size: 16px; font-weight: 800; color: #FFF; }
+        .b-tier { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 700; }
+        .tier-1 { background: rgba(0, 200, 83, 0.15); color: var(--green); }
+        .tier-off { background: rgba(255, 61, 87, 0.15); color: var(--red); }
+        .b-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--bg-input); padding: 10px; border-radius: 10px; margin: 10px 0; text-align: center; }
+        .b-lbl { font-size: 10px; color: var(--text-secondary); }
+        .b-val { font-size: 12px; font-weight: 700; margin-top: 2px; }
 
-        /* Scaling Steps */
-        .step-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-        .step-row:last-child { border-bottom: none; }
+        /* 2FA Box */
+        .secret-box {
+            background: #07090C; border: 1px dashed var(--gold); padding: 10px; border-radius: 10px;
+            font-family: monospace; font-size: 13px; color: var(--gold); text-align: center; margin: 10px 0;
+            user-select: all;
+        }
+        .live-totp { font-size: 12px; color: var(--green); text-align: center; margin-bottom: 10px; font-weight: 700; }
 
-        /* Toggle Switch */
-        .switch-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
-        input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--gold); margin: 0; }
-
-        /* Bottom Nav */
+        /* Bottom Nav (Only visible inside app) */
         nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(18, 22, 31, 0.96); backdrop-filter: blur(14px);
-            border-top: 1px solid var(--border); display: flex;
+            border-top: 1px solid var(--border); display: none;
             justify-content: space-around; padding: 10px 0 26px; z-index: 200;
         }
+        nav.visible { display: flex; }
         .nav-btn { background: none; border: none; color: var(--text-secondary); font-size: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
         .nav-btn.active { color: var(--gold); font-weight: 700; }
         .nav-ico { font-size: 19px; }
 
         /* Modal */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 300; align-items: center; justify-content: center; padding: 20px; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 300; align-items: center; justify-content: center; padding: 16px; }
         .modal.open { display: flex; }
-        .modal-box { background: var(--bg-card); border: 1px solid var(--gold); border-radius: 18px; padding: 20px; width: 100%; max-width: 380px; }
+        .modal-box { background: var(--bg-card); border: 1px solid var(--gold); border-radius: 18px; padding: 20px; width: 100%; max-width: 400px; max-height: 85vh; overflow-y: auto; }
+        .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
     </style>
 </head>
 <body>
@@ -117,7 +123,7 @@
 <header>
     <div class="brand">
         <span class="logo">APMU</span>
-        <span class="broker-tag">SWISSQUOTE INFRA</span>
+        <span class="broker-tag" id="headerBadge">SWISSQUOTE INFRA</span>
     </div>
     <select class="lang-select" id="langSelect" onchange="changeLang(this.value)">
         <option value="uz">🇺🇿 Oʻzbek</option>
@@ -133,51 +139,30 @@
     </select>
 </header>
 
-<!-- 1. AUTH & 2FA VIEW -->
-<div id="view-auth" class="view active">
-    <h2 data-i18n="auth_title">APMU Tizimiga Kirish</h2>
+<!-- 1-EKRAN: KIRISH (AUTH) -->
+<div id="scr-login" class="screen active">
+    <h2 data-t="auth_title">APMU Tizimiga Kirish</h2>
     <div class="card">
         <div class="sub-tabs">
-            <button class="sub-tab active" onclick="setAuthMethod('login', this)">Username / Parol</button>
-            <button class="sub-tab" onclick="setAuthMethod('gmail', this)">Gmail</button>
-            <button class="sub-tab" onclick="setAuthMethod('phone', this)">Telefon SMS</button>
+            <button class="sub-tab active" onclick="switchAuthTab('user', this)" data-t="tab_user">Username / Parol</button>
+            <button class="sub-tab" onclick="switchAuthTab('gmail', this)">Gmail</button>
+            <button class="sub-tab" onclick="switchAuthTab('sms', this)" data-t="tab_phone">Telefon SMS</button>
         </div>
 
-        <div id="auth-inputs">
-            <input type="text" id="authUser" placeholder="Username yoki Email">
-            <input type="password" id="authPass" placeholder="Parolingiz">
+        <div id="auth-fields">
+            <input type="text" id="inpUser" data-p="ph_user" placeholder="Username kiriting">
+            <input type="password" id="inpPass" data-p="ph_pass" placeholder="Parolingiz">
         </div>
 
-        <label class="muted" style="display:block; margin-bottom:6px;">Rolni tanlang (4 yoʻnalish):</label>
-        <select id="userRole">
-            <option value="trader">1. Treyder (Chempionat va Boshqaruv)</option>
-            <option value="corp_investor">2. Yirik Investor (Yuridik shaxs / Kompaniya)</option>
-            <option value="partner">3. Hamkor (IB) va Broker</option>
-            <option value="retail_investor">4. Mahalliy Kichik Investor ($100 – $10,000)</option>
+        <label class="muted" style="display:block; margin-bottom:6px;" data-t="role_lbl">Rolni tanlang (4 yoʻnalish):</label>
+        <select id="roleSelect">
+            <option value="trader" data-t="r1">1. Treyder (Chempionat va Boshqaruv)</option>
+            <option value="corp" data-t="r2">2. Yirik Investor (Yuridik shaxs / Kompaniya)</option>
+            <option value="partner" data-t="r3">3. Hamkor (IB) va Broker</option>
+            <option value="retail" data-t="r4">4. Mahalliy Kichik Investor ($100 – $10,000)</option>
         </select>
 
-        <button class="btn" onclick="trigger2FA()" data-i18n="btn_login">Davom etish (2FA Authenticator)</button>
+        <button class="btn" onclick="open2FAModal()" data-t="btn_2fa">Davom etish (2FA Authenticator)</button>
 
-        <div style="text-align:center; margin: 12px 0; font-size:12px; color:var(--text-secondary);">yoki tezkor kirish</div>
-        <button class="btn-social" onclick="trigger2FA()">G  Google ID orqali kirish</button>
-        <button class="btn-social" onclick="trigger2FA()">  Apple ID orqali kirish</button>
-    </div>
-
-    <div class="card">
-        <h3>KYC Tasdiqlash (Majburiy shart)</h3>
-        <p class="muted" style="margin-bottom:10px;">Chempionatda qatnashuvchi treyderlar va mahalliy kichik investorlar ($100-$10,000) uchun pasport/ID va manzil tasdiqlanadi.</p>
-        <input type="text" placeholder="Pasport seriyasi va raqami / ID">
-        <input type="text" placeholder="Doimiy yashash manzilingiz">
-        <input type="text" placeholder="Toʻliq F.I.Sh va mijoz maʼlumotlari">
-        <button class="btn-outline" onclick="alert('KYC hujjatlari tekshiruvga yuborildi!')">Hujjatlarni yuklash</button>
-    </div>
-</div>
-
-<!-- 2. CHEMPIONAT VA SCALING PLAN -->
-<div id="view-champ" class="view">
-    <h2 data-i18n="champ_title">Swissquote MT5 Chempionat</h2>
-    <div class="card" style="border-color: var(--gold);">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="broker-tag">FAQAT SWISSQUOTE MT5</span>
-            <span style="color:var(--green); font-size:12px; font-weight:700;">60% Treyder / 40% APMU</span>
-        </div>
+        <div style="text-align:center; margin: 12px 0; font-size:12px; color:var(--text-secondary);" data-t="or_fast">yoki tezkor kirish</div>
+        <button class="btn-social" onclick="openOAuthModal('Google ID')">G &nbsp;<span data-t="btn_google">Google ID orqali kirish</span></button>
