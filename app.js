@@ -174,3 +174,28 @@ function showS(id) { document.querySelectorAll('.scr').forEach(s => s.classList.
 function go(id, el) { showS(id); document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('act')); el.classList.add('act'); }
 function exitApp() { document.getElementById('nav').classList.remove('vis'); showS('s-login'); }
 function setL(v) { alert("Til oʻzgartirildi: " + v.toUpperCase()); }
+const DICT = {
+  uz: { h:"APMU Xavfsiz Kirish va Roʻyxatdan Oʻtish", t1:"Roʻyxatdan oʻtish", t2:"Kirish (Mavjud)", b1:"Tasdiqlash kodini yuborish", or:"yoki rasmiy hisob orqali", bg:"Google ID orqali ulanish", ba:"Apple ID orqali ulanish", bb:"👑 Rahbar kabineti (Super-Admin)" },
+  ru: { h:"Безопасный Вход и Регистрация APMU", t1:"Регистрация", t2:"Вход (Существующий)", b1:"Отправить код подтверждения", or:"или через официальный аккаунт", bg:"Подключить через Google ID", ba:"Подключить через Apple ID", bb:"👑 Кабинет Руководителя (Super-Admin)" },
+  en: { h:"APMU Secure Login & Registration", t1:"Sign Up", t2:"Sign In (Existing)", b1:"Send Verification Code", or:"or via official account", bg:"Connect with Google ID", ba:"Connect with Apple ID", bb:"👑 Executive Cabinet (Super-Admin)" },
+  kk: { h:"APMU Қауіпсіз Кіру және Тіркелу", t1:"Тіркелу", t2:"Кіру (Бар аккаунт)", b1:"Растау кодын жіберу", or:"немесе ресми аккаунт арқылы", bg:"Google ID арқылы қосылу", ba:"Apple ID арқылы қосылу", bb:"👑 Басшы кабинеті (Super-Admin)" },
+  tg: { h:"Вуруди Бехатар ва Бақайдгирии APMU", t1:"Бақайдгирӣ", t2:"Вуруд (Мавҷуда)", b1:"Фиристодани рамзи тасдиқ", or:"ё тавассути ҳисоби расмӣ", bg:"Пайвастшавӣ бо Google ID", ba:"Пайвастшавӣ бо Apple ID", bb:"👑 Кабинети Роҳбар (Super-Admin)" },
+  ky: { h:"APMU Коопсуз Кирүү жана Катталуу", t1:"Катталуу", t2:"Кирүү (Бар аккаунт)", b1:"Тастыктоо кодун жөнөтүү", or:"же расмий аккаунт аркылуу", bg:"Google ID аркылуу кошулуу", ba:"Apple ID аркылуу кошулуу", bb:"👑 Жетекчи кабинети (Super-Admin)" },
+  ar: { h:"تسجيل الدخول والتسجيل الآمن APMU", t1:"إنشاء حساب", t2:"تسجيل الدخول", b1:"إرسال رمز التحقق", or:"أو عبر الحساب الرسمي", bg:"الاتصال عبر Google ID", ba:"الاتصال عبر Apple ID", bb:"👑 مكتب المدير (Super-Admin)" },
+  zh: { h:"APMU 安全登录与注册", t1:"注册账号", t2:"登录 (已有账号)", b1:"发送验证码", or:"或通过官方账号", bg:"通过 Google ID 连接", ba:"通过 Apple ID 连接", bb:"👑 总裁管理后台 (Super-Admin)" },
+  ms: { h:"Log Masuk & Pendaftaran Selamat APMU", t1:"Daftar Baru", t2:"Log Masuk (Sedia Ada)", b1:"Hantar Kod Pengesahan", or:"atau melalui akaun rasmi", bg:"Sambung dengan Google ID", ba:"Sambung dengan Apple ID", bb:"👑 Kabinet Pengarah (Super-Admin)" },
+  ja: { h:"APMU セキュアログイン・新規登録", t1:"新規登録", t2:"ログイン (既存)", b1:"認証コードを送信", or:"または公式アカウントで", bg:"Google ID で連携", ba:"Apple ID で連携", bb:"👑 経営者キャビネット (Super-Admin)" }
+};
+
+function setL(v) {
+  const d = DICT[v] || DICT.uz;
+  document.querySelector('#s-login h2').innerText = d.h;
+  const tabs = document.querySelectorAll('#s-login .tab');
+  if (tabs) tabs.innerText = d.t1;
+  if (tabs) tabs.innerText = d.t2;
+  document.querySelector('#box-reg .btn').innerText = d.b1;
+  const btns = document.querySelectorAll('#s-login .btn-s');
+  if (btns) btns.innerHTML = 'G &nbsp;' + d.bg;
+  if (btns) btns.innerHTML = ' &nbsp;' + d.ba;
+  document.querySelector('#s-login .btn-b').innerText = d.bb;
+}
