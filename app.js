@@ -81,3 +81,96 @@ function loginExistingUser() {
 }
 
 // HAQIQIY RFC 6238 TOTP (GOOGLE AUTHENTICATOR ALGORITMI)
+];
+let usersDB = JSON.parse(localStorage.getItem('apmu_users') || '{}');
+let pendingCode = null, tempUser = null, curC = 'all';
+const TOT_SECRET = "JBSWY3DPEHPK3PXP";
+
+function toggleAuthMode(m) {
+  document.getElementById('box-login').style.display = m === 'login' ? 'block' : 'none';
+  document.getElementById('box-reg').style.display = m === 'reg' ? 'block' : 'none';
+}
+function sendVerifyCode() {
+  const contact = document.getElementById('regContact').value.trim();
+  const pass = document.getElementById('regPass').value.trim();
+  const role = document.getElementById('regRole').value;
+  if (!contact || pass.length < 4) { alert("Gmail/Telefon va 4+ belgili parol kiriting!"); return; }
+  pendingCode = String(Math.floor(100000 + Math.random() * 900000));
+  tempUser = { contact, pass, role };
+  document.getElementById('verifyStep').style.display = 'block';
+  alert(`${contact} manziliga tasdiqlash kodi yuborildi.\nSinov kodi: ${pendingCode}`);
+}
+function confirmRegistration() {
+  if (!pendingCode || document.getElementById('regCodeInp').value.trim() !== pendingCode) { alert("XATO! Kod notoʻgʻri."); return; }
+  usersDB[tempUser.contact] = tempUser;
+  localStorage.setItem('apmu_users', JSON.stringify(usersDB));
+  open2FASetup(tempUser);
+}
+function loginExistingUser() {
+  const c = document.getElementById('logContact').value.trim(), p = document.getElementById('logPass').value.trim();
+  if (!usersDB[c] || usersDB[c].pass !== p) { alert("XATO! Bunday foydalanuvchi topilmadi yoki parol notoʻgʻri."); return; }
+  tempUser = usersDB[c]; open2FASetup(tempUser);
+}
+function base32ToBytes(b32) {
+  const a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"; let bits = "", bytes = [];
+  for (let i = 0; i < b32.length; i++) { const v = a.indexOf(b32.charAt(i).toUpperCase()); if (v >= 0) bits += v.toString(2).padStart(5, '0'); }
+  for (let i = 0; i + 8 <= bits.length; i += 8) bytes.push(parseInt(bits.substr(i, 8), 2));
+  return new Uint8Array(bytes);
+}
+async function computeRealTOTP(secret) {
+  const keyBytes = base32ToBytes(secret), counter = Math.floor(Math.floor(Date.now() / 1000) / 30);
+  const msg = new ArrayBuffer(8); new DataView(msg).setUint32(4, counter, false);
+  const k = await crypto.subtle.importKey("raw", keyBytes, { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
+  const sig = new Uint8Array(await crypto.subtle.sign("HMAC", k, msg)), off = sig[sig.length - 1] & 0xf;
+  const bin = ((sig[off] & 0x7f) << 24) | ((sig[off + 1] & 0xff) << 16) | ((sig[off + 2] & 0xff) << 8) | (sig[off + 3] & 0xff);
+  return String(bin % 1000000).padStart(6, '0');
+}
+function open2FASetup(u) {
+  const url = `otpauth://totp/APMU:${encodeURIComponent(u.contact)}?secret=${TOT_SECRET}&issuer=APMU`;
+  document.getElementById('qrImg').src = `https://qrserver.com{encodeURIComponent(url)}`;
+  document.getElementById('m-2fa').classList.add('open');
+}
+async function verifyReal2FA() {
+  const code = document.getElementById('tinp').value.trim();
+  if (code !== await computeRealTOTP(TOT_SECRET)) { alert("XATO! Google Authenticator ilovangizdagi joriy 6 xonali kod bilan mos kelmadi!"); return; }
+  document.getElementById('m-2fa').classList.remove('open');
+  if (tempUser.role === 'trader' || tempUser.role === 'ret') showS('s-kyc'); else inApp();
+}
+function doneKYC() {
+  if (!document.getElementById('k1').value.trim() || !document.getElementById('k2').value.trim()) { alert("F.I.Sh va Pasport/ID kiriting!"); return; }
+  inApp();
+}
+function bossIn() {
+  const p = prompt("Rahbar maxfiy parolini kiriting:");
+  if (p === "APMU2026BOSS") { document.getElementById('nav').classList.remove('vis'); showS('s-boss'); }
+  else if (p !== null) alert("RUXSAT RAD ETILDI! Parol notoʻgʻri.");
+}
+function openOAuthReal(pr) { document.getElementById('oat').innerText = pr + " OAuth2"; document.getElementById('m-oa').classList.add('open'); }
+function submitOAuthEmail() {
+  const em = document.getElementById('oaEmail').value.trim();
+  if (!em.includes('@')) { alert("Haqiqiy email manzilingizni kiriting!"); return; }
+  tempUser = { contact: em, pass: "OAUTH", role: document.getElementById('regRole').value || "trader" };
+  document.getElementById('m-oa').classList.remove('open'); open2FASetup(tempUser);
+}
+function drawB() {
+  const q = (document.getElementById('bq').value || '').toLowerCase(), box = document.getElementById('blist'); box.innerHTML = '';
+  B.filter(x => (curC === 'all' || x.c === curC) && (x.n.toLowerCase().includes(q) || x.r.toLowerCase().includes(q) || x.z.toLowerCase().includes(q))).forEach(x => {
+    box.innerHTML += `<div class="card"><div style="display:flex;justify-content:space-between"><b>${x.n}</b><span class="tag">${x.y}-yil</span></div><div class="mut">${x.r}</div><div class="mut" style="color:var(--gold);margin-top:4px">📍 Zona: ${x.z}</div><button class="btn-o" onclick="infoB('${x.n}')">Toʻliq tarixi va Birja ijrosi</button></div>`;
+  });
+}
+function catB(c, el) { curC = c; el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('act')); el.classList.add('act'); drawB(); }
+function infoB(n) {
+  const x = B.find(i => i.n === n);
+  document.getElementById('bdet').innerHTML = `<h3 style="color:var(--gold)">${x.n} (${x.y})</h3><p class="mut" style="margin:8px 0;color:#fff">${x.h}</p><div class="row"><span>Regulyator:</span><b>${x.r}</b></div><div class="row"><span>Zona:</span><b style="color:var(--gold)">${x.z}</b></div><div class="row"><span>Birjaga chiqarish:</span><b style="color:var(--grn)">${x.ex}</b></div><button class="btn" style="margin-top:10px" onclick="alert('${x.n} tanlandi!')">Tanlash</button><button class="btn-o" onclick="document.getElementById('m-binfo').classList.remove('open')">Yopish</button>`;
+  document.getElementById('m-binfo').classList.add('open');
+}
+function addW() {
+  const n = document.getElementById('wn').value, l = document.getElementById('wl').value, t = document.getElementById('wt').value;
+  if (!n || !l) return;
+  document.getElementById('wlist').innerHTML += `<div class="card"><div class="row"><b>${n} (${l})</b><span style="color:var(--grn)">● Faol</span></div><div class="mut">${t}</div></div>`;
+}
+function inApp() { document.getElementById('nav').classList.add('vis'); showS('s-brok'); drawB(); }
+function showS(id) { document.querySelectorAll('.scr').forEach(s => s.classList.remove('act')); document.getElementById(id).classList.add('act'); }
+function go(id, el) { showS(id); document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('act')); el.classList.add('act'); }
+function exitApp() { document.getElementById('nav').classList.remove('vis'); showS('s-login'); }
+function setL(v) { alert("Til oʻzgartirildi: " + v.toUpperCase()); }
